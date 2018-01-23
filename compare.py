@@ -1,59 +1,12 @@
 """Comparinator"""
 from pathlib import Path
 from sys import argv
+import argparse
 import json
 
 INDEX_FILE = "index.json"
 target_file = ""
 output_file = ""
-
-def print_help():
-    'MAN page'
-    print("Compare.py compares files based on keyword frequency.")
-    print("Taxonomy: compare.py target.txt -i index.txt -o output.txt")
-
-def handle_argv(args):
-    'Command Arguments handler.'
-    end_run = False
-    has_index = False
-    i = 1
-
-    while i < len(args):
-        arg = args[i]
-        if i == 1:
-            if arg == "-help":
-                print_help()
-                end_run = True
-                break
-            else:
-                target_file = arg
-
-        if arg == "-i":
-            if i < len(args) - 1:
-                get_index(args[i+1])
-                has_index = True
-                i += 1
-            else:
-                print("Missing Index File Name and Path")
-                end_run = True
-                break
-
-        if arg == "-o":
-            if i < len(args) - 1:
-                output_file = args[i+1]
-                i += 1
-            else:
-                print("Missing Output File Name Path")
-                end_run = True
-                break
-
-        i += 1
-
-    if end_run:
-        exit()
-
-    if not has_index:
-        load_index()
 
 def get_index(file_path):
     'generates index and saves it to the cache'
@@ -78,5 +31,10 @@ def save_file(file_path, obj):
 def load_file(file_path):
     'loads a file from the disk'
 
-
-handle_argv(argv)
+parser = argparse.ArgumentParser(usage='Compares and Correlates a given target file against the keyword frequency of a given document.', epilog='Good luck with future with them keywords!')
+parser.add_argument('target_file', nargs='+', help='File to be compared against index')
+parser.add_argument('-i', nargs='?', type=argparse.FileType('r'), help='Sets the file to be used as the index to compare against. Will be saved for future runs and replaces any previous indexes.')
+parser.add_argument('-o', nargs='?',type=argparse.FileType('w'), help='Saves the output to a file with the passed name. Will not replace existing file.')
+args = parser.parse_args()
+print(args)
+print(args.target_file[0])
